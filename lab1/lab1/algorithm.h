@@ -2,16 +2,18 @@
 
 #include <iostream>
 
-class Algorithms
+class Algorithm
 {
 public:
-	Algorithms();
-	~Algorithms();
+	Algorithm();
+	~Algorithm();
+
+	virtual void calc(double a, double b, double eps, int N) = 0;
+	virtual void printName() = 0;
 
 	double swann(double& h, double& x1, double& x2);
-	void uniformSearch(double a, double b, double eps, int N);
 
-private:
+protected:
 	double myFunc(double x);
 	double firstDerivative(double x);
 	double secondDerivative(double x);
