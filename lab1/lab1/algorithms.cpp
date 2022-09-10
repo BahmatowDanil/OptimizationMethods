@@ -26,6 +26,28 @@ double Algorithms::swann(double& h, double& x1, double& x2)
     return (x2);
 }
 
+void Algorithms::uniformSearch(double a, double b, double eps, int N)
+{
+    double yMin = myFunc(a);
+    double xMin = a;
+    while (fabs(b - a) > eps)
+    {
+        for (double x = a + ((b - a) / N); x <= b; x += (b - a) / N)
+        {
+            double y = myFunc(x);
+            if (y < yMin)
+            {
+                xMin = x;
+                yMin = y;
+            }
+        }
+        a = xMin - (b - a) / N;
+        b = xMin + (b - a) / N;
+    }
+    std::cout << "Min = " << xMin << std::endl;
+    std::cout << " Значение функции: " << yMin << std::endl;
+}
+
 double Algorithms::myFunc(double x)
 {
 	return -4 * x + exp(fabs(x - 0.2) * x);

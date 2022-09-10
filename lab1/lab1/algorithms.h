@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 class Algorithms
 {
 public:
@@ -7,6 +9,7 @@ public:
 	~Algorithms();
 
 	double swann(double& h, double& x1, double& x2);
+	void uniformSearch(double a, double b, double eps, int N);
 
 private:
 	double myFunc(double x);
