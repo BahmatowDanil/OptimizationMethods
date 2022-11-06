@@ -2,6 +2,11 @@
 #include <math.h>
 #include <list>
 #include <iomanip>
+#include <string>
+#include <string.h>
+
+#define STEP 0.1
+#define INTERVALS 10
 
 const double fi = (1 + sqrt(5)) / 2; // "Золотое" число
 
@@ -20,12 +25,19 @@ double ddf(double x)
     return 4 * pow(x - 0.1, 2) * exp(x * (x - 0.2)) + 2 * exp(x * (x - 0.2));
 }
 
-double g(double x)
-{
-    return x - f(x) / df(x);
-}
 
-double swann(double x1, double x2, double h)
+struct Interval
+{
+    Interval(double __a, double __b)
+    {
+        a = __a;
+        b = __b;
+    }
+    double a;
+    double b;
+};
+
+Interval swann(double x1, double x2, double h)
 {
     x2 = x1 + h;
     if (f(x2) > f(x1))
@@ -39,8 +51,8 @@ double swann(double x1, double x2, double h)
         x2 = x1 + h;
         h = h * 2;
     }
-    std::cout << "x1 = " << x1 << " x2 = " << x2 << std::endl;
-    return (x2);
+    std::cout << "a = " << x1 << " b = " << x2 << std::endl;
+    return (Interval(x1, x2));
 }
 
 
@@ -48,6 +60,7 @@ void uniSearch(double a, double b, double eps, int N)
 {
     double yMin = f(a);
     double xMin = a;
+    int i = 0;
     while (fabs(b - a) > eps)
     {
         for (double x = a + ((b - a) / N); x <= b; x += (b - a) / N)
@@ -61,43 +74,60 @@ void uniSearch(double a, double b, double eps, int N)
         }
         a = xMin - (b - a) / N;
         b = xMin + (b - a) / N;
-        std::cout << "Min = " << xMin << std::endl;
-        std::cout << " Значение функции: " << yMin << std::endl;
+        std::cout << i << ") x = " << xMin << " f = " << yMin << std::endl;
+        i++;
     }
-    std::cout << "Min = " << xMin << std::endl;
-    std::cout << " Значение функции: " << yMin << std::endl;
 }
 
 void newton(double x, double eps)
 {
-    double f0 = f(x);
-    double x1 = x;
-    while (fabs(f(x1)) > eps)
+    double x1;
+    int i = 0;
+    do
     {
-        x -= f0 / df(x1);
-        f0 = f(x1);
-        std::cout << "x = " << x << " f = " << f(x) << std::endl;
-    }
+        x1 = x - df(x) / ddf(x);
+        x = x1;
+        std::cout << i << ") x = " << x1 << " f = " << f(x1) << std::endl;
+        i++;
+    } while (df(x1) > eps);
 
 }
 
 void goldenRatio(double a, double b, double eps)
 {
     double x1, x2;
-    while (fabs(b - a) > eps) {
+    int i = 0;
+    do
+    {
         x1 = b - (b - a) / fi;
         x2 = a + (b - a) / fi;
         f(x1) > f(x2) ? a = x1 : b = x2;
-        std::cout << "x = " << (a + b) / 2 << " f = " << f((a + b) / 2) << std::endl;
-    }   
+        std::cout << i << ") x = " << (a + b) / 2 << " f = " << f((a + b) / 2) << std::endl;
+        i++;
+    } while (fabs(a - b) > eps);
 }
 
 int main(int argc, char** argv)
 {
-    setlocale(LC_ALL, "Russian");
-    swann(0, 3, 0.1);
-    uniSearch(0.8, 1.6, 0.00001, 10);
-    //newton(0.5, 0.001);
-    goldenRatio(0.8, 1.6, 0.00001);
+    if (argc != 5)
+    {
+        std::cerr << "Using: " << argv[0] << " <left bound> <right bound> <x0> <epsilon>" << std::endl;
+        return 0;
+    }
+    auto a = std::atof(argv[1]);
+    double b = std::atof(argv[2]);
+    double x0 = std::atof(argv[3]);
+    auto eps = std::stod(argv[4]);;
+    std::cout << a << " " << b << " " << x0 << " " << eps;
+
+    std::cout << std::endl << "Swann" << std::endl;
+    auto interval = swann(a, b, STEP);
+    std::cout << std::endl << "Uni" << std::endl;
+    uniSearch(interval.a, interval.b, eps, INTERVALS);
+    std::cout << std::endl << "Newton" << std::endl;
+    newton(x0, eps);
+    std::cout << std::endl << "Golden Ratio" << std::endl;
+    goldenRatio(interval.a, interval.b, eps);
+    std::cout << std::endl << "Done!" << std::endl;
     std::cin.get();
 }
