@@ -117,8 +117,11 @@ int main(int argc, char** argv)
     auto a = std::atof(argv[1]);
     double b = std::atof(argv[2]);
     double x0 = std::atof(argv[3]);
-    auto eps = std::stod(argv[4]);;
-    std::cout << a << " " << b << " " << x0 << " " << eps;
+    auto eps = std::stod(argv[4]);
+
+    std::cout << "f(x) = -4 * x + exp(fabs(x - 0.2) * x)" << std::endl;
+    std::cout << "f'(x) = (2 * x - 0.2) * exp((x - 0.2) * x) - 4" << std::endl;
+    std::cout << "f''(x) = 4 * pow(x - 0.1, 2) * exp(x * (x - 0.2)) + 2 * exp(x * (x - 0.2))" << std::endl;
 
     std::cout << std::endl << "Swann" << std::endl;
     auto interval = swann(a, b, STEP);
@@ -129,5 +132,4 @@ int main(int argc, char** argv)
     std::cout << std::endl << "Golden Ratio" << std::endl;
     goldenRatio(interval.a, interval.b, eps);
     std::cout << std::endl << "Done!" << std::endl;
-    std::cin.get();
 }
