@@ -114,9 +114,9 @@ int main(int argc, char** argv)
         std::cerr << "Using: " << argv[0] << " <left bound> <right bound> <x0> <epsilon>" << std::endl;
         return 0;
     }
-    auto a = std::atof(argv[1]);
-    double b = std::atof(argv[2]);
-    double x0 = std::atof(argv[3]);
+    auto a = std::stod(argv[1]);
+    auto b = std::stod(argv[2]);
+    auto x0 = std::stod(argv[3]);
     auto eps = std::stod(argv[4]);
 
     std::cout << "f(x) = -4 * x + exp(fabs(x - 0.2) * x)" << std::endl;
