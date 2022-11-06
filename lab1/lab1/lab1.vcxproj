@@ -127,13 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="algorithm.cpp" />
     <ClCompile Include="lab1.cpp" />
-    <ClCompile Include="UniformSearch.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="algorithm.h" />
-    <ClInclude Include="UniformSearch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

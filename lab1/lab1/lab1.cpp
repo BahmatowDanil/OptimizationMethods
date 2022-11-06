@@ -1,6 +1,4 @@
 ﻿#include <iostream>
-#include "algorithm.h"
-#include "UniformSearch.h"
 #include <math.h>
 #include <list>
 #include <iomanip>
