@@ -1,7 +1,9 @@
 ﻿#include <iostream>
 #include <math.h>
+//#include <system>
 
 constexpr double lambda = 0.335;
+const double fi = (1 + sqrt(5)) / 2;
 
 struct vector
 {
@@ -42,6 +44,50 @@ vector calcForKoshi(vector x, vector gradient, double lambda)
     return buffer;
 }
 
+double ffx(double x, vector grad, vector xj)
+{
+    vector buffer;
+    buffer.x1 = xj.x1 - x * grad.x1;
+    buffer.x2 = xj.x2 - x * grad.x2;
+
+    return fx(buffer);
+}
+
+double goldenRatio(double a, double b, double eps, vector grad, vector x)
+{
+    double x1, x2;
+    double y1, y2;
+
+    x1 = b - ((b - a) / fi);
+    x2 = a + ((b - a) / fi);
+
+    y1 = ffx(x1, grad, x);
+    y2 = ffx(x2, grad, x);
+
+    while (std::fabs(b - a) > eps)
+    {
+        if (y1 <= y2)
+        {
+            b = x2;
+            x2 = x1;
+            x1 = b - ((b - a) / fi);
+            y2 = y1;
+            y1 = ffx(x1, grad, x);
+        }
+        else 
+        {
+            a = x1;
+            x1 = x2;
+            x2 = a + ((b - a) / fi);
+            y1 = y2;
+            y2 = ffx(x2, grad, x);
+        }
+    }
+
+    return (a + b) / 2;
+   
+}
+
 vector calcForNewton(vector x, revG g, vector grad)
 {
     revG gAfterMult;
@@ -80,7 +126,7 @@ vector newton(vector v, double eps)
     return current;
 }
 
-vector koshi(vector x, double eps, double lambda) 
+vector koshi(vector x, double eps) 
 {
     vector current = x;
     vector last;
@@ -90,8 +136,9 @@ vector koshi(vector x, double eps, double lambda)
     {
         last = current; 
         vector grad = gradient(current); 
+        auto lambda = goldenRatio(0, 1, eps, grad, current);
         current = calcForKoshi(current, grad, lambda); 
-        std::cout  << iter << ") " << " x1 = " << current.x1 << " x2 = " << current.x2 << std::endl;
+        std::cout  << iter << ") " << " x1 = " << current.x1 << " x2 = " << current.x2 << " lambda = " << lambda << std::endl;
         iter++;
     } while (std::fabs(current.x1 - last.x1) > eps || std::fabs(current.x2 - last.x2) > eps);
 
@@ -100,28 +147,31 @@ vector koshi(vector x, double eps, double lambda)
 
 int main()
 {
-    vector v{ 0, 0 };
-    double eps;
 
-    std::cout << "f(x) = (x2 - x1)^2 + (1 - x1)^2" << std::endl;
+        vector v{ 0, 0 };
+        double eps;
 
-    std::cout << "Input x1 = ";
-    std::cin >> v.x1;
-    std::cout << "Input x2 = ";
-    std::cin >> v.x2;
-    std::cout << "Input eps = ";
-    std::cin >> eps;
+        std::cout << "f(x) = (x2 - x1)^2 + (1 - x1)^2" << std::endl;
 
-    std::cout << std::endl;
+        std::cout << "Input x1 = ";
+        std::cin >> v.x1;
+        std::cout << "Input x2 = ";
+        std::cin >> v.x2;
+        std::cout << "Input eps = ";
+        std::cin >> eps;
 
-    std::cout << "Newton" << std::endl;
-    vector res = newton(v, eps);
-    std::cout << "Newton: x1 = " << res.x1 << " x2 = " << res.x2 << std::endl;
+        std::cout << std::endl;
 
-    std::cout << std::endl;
+        std::cout << "Newton" << std::endl;
+        vector res = newton(v, eps);
+        std::cout << "Newton: x1 = " << res.x1 << " x2 = " << res.x2 << std::endl;
 
-    std::cout << "Koshi" << std::endl;
-    res = koshi(v, eps, lambda);
-    std::cout << "Koshi: x1 = " << res.x1 << " x2 = " << res.x2 << std::endl;
+        std::cout << std::endl;
+
+        std::cout << "Koshi" << std::endl;
+        res = koshi(v, eps);
+        std::cout << "Koshi: x1 = " << res.x1 << " x2 = " << res.x2 << std::endl;
+
+
 }
 
